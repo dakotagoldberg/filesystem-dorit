@@ -1,0 +1,12 @@
+Requirements
+File system exists only in one String
+Folders are able to hold more folders
+Files can be created edited and deleted
+dorit is the deepest folder and cannot be exited
+File system is saved and read from a file
+Files have no names and there can be duplicates
+Do not allow punctuation in files
+Supported commands: ls, cd, mkdir, touch, edit, rm, rmdir
+ 
+String Requirements:
+“[folder:dorit[file:Hello World][file:This text is parseable][folder:deeper[][file:Doom]]”
