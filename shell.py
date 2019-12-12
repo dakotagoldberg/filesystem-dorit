@@ -12,7 +12,7 @@ def findLocation(index):
         if openB == index + 1:
             return i
 
-currentLocation = findLocation(0)
+myLoc = 0
 
 def currentFolderContents(index):
     index = index + 1
@@ -34,10 +34,10 @@ def currentFolderName(index):
     return fileSystem[i+1:findLocation(index)]
 
 
-# while (True):
-#     # print(fileSystem[currentLocation] + " "),
-#     input(fileSystem[currentLocation] + ": ")
-#     break
+while (True):
+    # print(fileSystem[currentLocation] + " "),
+    input(currentFolderName(myLoc) + ": ")
+    break
 
 print(findLocation(1))
 print(currentFolderContents(1))
