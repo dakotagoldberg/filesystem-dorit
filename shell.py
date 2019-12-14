@@ -34,23 +34,27 @@ def currentFolderName(index):
     return fileSystem[i+1:findLocation(index)]
 
 def showHelp():
-    print("%10s" % "ls") 
-    print("%10s" % "cd")
-    print(111)
+    # print("ls"),
+    print("%5s %30s" % ("ls", "lists all items in folder")) 
+    print("%5s %30s" % ("cd", "changes directory")) 
+    print("%5s %30s" % ("mkdir", "creates a new directory")) 
+    print("%5s %30s" % ("touch", "creates a new file")) 
+    print("%5s %30s" % ("edit", "edits the contents of a file")) 
+    print("%5s %30s" % ("rm", "removes a file")) 
+    print("%5s %30s" % ("rmdir", "removes a folder"))  
 
 
-# while (True):
 
-#     command = input(currentFolderName(myLoc) + ": ")
-#     print(command)
-#     # The big IF: based on command entered, run specific action.
+while (True):
 
-#     if (command == "help"):
-#         print("i knew it")
-#         showHelp()
+    command = raw_input(currentFolderName(myLoc) + ": ")
+    # The big IF: based on command entered, run specific action.
 
-#     break
+    if (command == "help"):
+        showHelp()
 
-print(findLocation(1))
-print(currentFolderContents(3))
-print(currentFolderName(1))
+    break
+
+# print(findLocation(1))
+# print(currentFolderContents(3))
+# print(currentFolderName(1))
