@@ -34,7 +34,6 @@ def currentFolderName(index):
     return fileSystem[i+1:findLocation(index)]
 
 def showHelp():
-    # print("ls"),
     print("%5s %30s" % ("ls", "lists all items in folder")) 
     print("%5s %30s" % ("cd", "changes directory")) 
     print("%5s %30s" % ("mkdir", "creates a new directory")) 
