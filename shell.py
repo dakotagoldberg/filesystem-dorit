@@ -33,12 +33,24 @@ def currentFolderName(index):
         i-=1
     return fileSystem[i+1:findLocation(index)]
 
+def showHelp():
+    print("%10s" % "ls") 
+    print("%10s" % "cd")
+    print(111)
+
 
 while (True):
-    # print(fileSystem[currentLocation] + " "),
-    input(currentFolderName(myLoc) + ": ")
+
+    command = input(currentFolderName(myLoc) + ": ")
+    print(command)
+    # The big IF: based on command entered, run specific action.
+
+    if (command == "help"):
+        print("i knew it")
+        showHelp()
+
     break
 
-print(findLocation(1))
-print(currentFolderContents(1))
-print(currentFolderName(0))
+# print(findLocation(1))
+# print(currentFolderContents(1))
+# print(currentFolderName(0))
