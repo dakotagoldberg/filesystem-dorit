@@ -1,5 +1,5 @@
 global fileSystem
-fileSystem = "[folder:dorit[folder:winter[folder:december[][file:sleet][file:ice]]]]"
+fileSystem = "[folder:dorit[folder:winter[folder:december[]][file:sleet][file:ice]]]"
 
 def findLocation(index):
     openB = 0
@@ -23,8 +23,8 @@ def currentFolderContents(index):
             openB+=1
         if fileSystem[i] == "]":
             closedB +=1
-        if openB == closedB:
-            return fileSystem[findLocation(index):i+1]
+        if openB == closedB - 1:
+            return fileSystem[findLocation(index):i]
 
 def currentFolderName(index):
     index = index + 1
@@ -39,18 +39,18 @@ def showHelp():
     print(111)
 
 
-while (True):
+# while (True):
 
-    command = input(currentFolderName(myLoc) + ": ")
-    print(command)
-    # The big IF: based on command entered, run specific action.
+#     command = input(currentFolderName(myLoc) + ": ")
+#     print(command)
+#     # The big IF: based on command entered, run specific action.
 
-    if (command == "help"):
-        print("i knew it")
-        showHelp()
+#     if (command == "help"):
+#         print("i knew it")
+#         showHelp()
 
-    break
+#     break
 
-# print(findLocation(1))
-# print(currentFolderContents(1))
-# print(currentFolderName(0))
+print(findLocation(1))
+print(currentFolderContents(3))
+print(currentFolderName(1))
