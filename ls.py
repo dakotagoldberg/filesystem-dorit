@@ -1,5 +1,5 @@
 global fileSystem
-fileSystem = "[folder:dorit[folder:winter[folder:december[]][file:sleet][file:ice]]]"
+fileSystem = "[folder:dorit[folder:winter[folder:december[folder:christmas][folder:kwanzaa]][file:sleet][file:ice]]]"
 
 def ls(index):
     print("working")

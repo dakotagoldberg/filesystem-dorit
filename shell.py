@@ -1,5 +1,7 @@
 global fileSystem
-fileSystem = "[folder:dorit[folder:winter[folder:december[]][folder:january[]][file:sleet][file:ice]]]"
+global myLoc
+fileSystem = "[folder:dorit[folder:winter[folder:december[folder:christmas[]][folder:kwanzaa[]]][folder:january[]][file:sleet][file:ice]]]"
+myLoc = 0
 
 
 
@@ -11,11 +13,17 @@ def findLocation(index):
                 return i
             count+=1
 
-myLoc = 0
+def reverseLookup(name):
+    count = 0
+    for i in range(len(fileSystem)):
+        if fileSystem[i] == ":":
+            if (currentFolderName(count) == name):
+                return count
+            count+=1
+
 
 def totalItems():
     return fileSystem.count(":")
-
 
 
 def currentFolderContents(index):
@@ -56,34 +64,65 @@ def currentPath(index):
     return path
 
 
+def parseContents(index):
+    raw = currentFolderContents(index)
+    items = []
+    openB = 0
+    closedB = 0
+    count = index + 1
+    start = findLocation(index) + len(currentFolderName(index)) + 1
+    i = start
+    while (i < len(raw) + start):
+        if fileSystem[i] == "[":
+            openB+=1
+        elif fileSystem[i] == "]":
+            closedB +=1
+        elif fileSystem[i] == ":":
+            if (openB - closedB == 1):
+                items.append(str(currentFolderName(count)))
+            count+=1
+        i+=1
+    return items
+
 
 def showHelp():
-    print("%5s %30s" % ("ls", "lists all items in folder")) 
-    print("%5s %30s" % ("cd", "changes directory")) 
-    print("%5s %30s" % ("mkdir", "creates a new directory")) 
-    print("%5s %30s" % ("touch", "creates a new file")) 
-    print("%5s %30s" % ("edit", "edits the contents of a file")) 
-    print("%5s %30s" % ("rm", "removes a file")) 
-    print("%5s %30s" % ("rmdir", "removes a folder"))  
+    print("%5s %40s" % ("ls", "lists all items in folder")) 
+    print("%5s %40s" % ("cd", "changes directory")) 
+    print("%5s %40s" % ("mkdir", "creates a new directory")) 
+    print("%5s %40s" % ("touch", "creates a new file")) 
+    print("%5s %40s" % ("edit", "edits the contents of a file")) 
+    print("%5s %40s" % ("rm", "removes a file")) 
+    print("%5s %40s" % ("rmdir", "removes a folder"))  
+    print("%5s %40s" % ("path", "displays path of current location"))  
 
+
+def listContents(index):
+    for i in parseContents(index):
+        print(i)
+
+def changeDirectory(currentIndex, newLoc):
+    if newLoc == ".." and currentIndex != 0:
+        x = currentPath(currentIndex)
+        return reverseLookup(x[1])
+    else:
+        x = parseContents(currentIndex)
+        if newLoc in x:
+            return reverseLookup(newLoc)
+    return currentIndex
 
 
 while (True):
 
     command = raw_input(currentFolderName(myLoc) + ": ")
     # The big IF: based on command entered, run specific action.
-
-    if (command == "help"):
+    inputs = command.split(" ")
+    if (inputs[0] == "help"):
         showHelp()
+    elif (inputs[0] == "path"):
+        currentPath(myLoc)
+    elif (inputs[0] == "ls"):
+        listContents(myLoc)
+    elif (inputs[0] == "cd"):
+        myLoc = changeDirectory(myLoc, inputs[1])
 
-    break
-
-# print(findLocation(1))
-# print(currentFolderContents(3))
-# print(currentFolderName(1))
-# print(findLocation(3))
-# print(currentFolderName(1))
-# print(totalItems())
-# print(currentFolderContents(0))
-# print("")
-# print(currentPath(1))
+    # break
