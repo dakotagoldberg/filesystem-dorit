@@ -1,5 +1,10 @@
 # stuff we don't need at the moment
 
+## Neat little way to list everything + type
+# for i in range(totalItems()):
+#     print(currentFolderName(i) + ": " + itemType(i))
+
+
 # Old bracket-based methods
 
 # def findLocation(index):

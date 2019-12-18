@@ -4,7 +4,6 @@ fileSystem = "[folder:dorit[folder:winter[folder:december[folder:christmas[]][fo
 myLoc = 0
 
 
-
 def findLocation(index):
     count = 0
     for i in range(len(fileSystem)):
@@ -131,7 +130,3 @@ while (True):
     elif (inputs[0] == "cd"):
         myLoc = changeDirectory(myLoc, inputs[1])
 
-    # break
-
-# for i in range(totalItems()):
-#     print(currentFolderName(i) + ": " + itemType(i))
