@@ -44,6 +44,12 @@ def currentFolderName(index):
         i+=1
     return fileSystem[findLocation(index)+1:i]
 
+def itemType(index):
+    i = findLocation(index)
+    while (fileSystem[i] != "[" and fileSystem[i] != "]"):
+        i-=1
+    return fileSystem[i + 1:findLocation(index)]
+
 def currentPath(index):
     path = []
     path.append(currentFolderName(index))
@@ -98,7 +104,7 @@ def showHelp():
 
 def listContents(index):
     for i in parseContents(index):
-        print(i)
+        print(i + " --> " + itemType(reverseLookup(i)))
 
 def changeDirectory(currentIndex, newLoc):
     if newLoc == ".." and currentIndex != 0:
@@ -106,7 +112,7 @@ def changeDirectory(currentIndex, newLoc):
         return reverseLookup(x[1])
     else:
         x = parseContents(currentIndex)
-        if newLoc in x:
+        if newLoc in x and itemType(reverseLookup(newLoc)) == "folder":
             return reverseLookup(newLoc)
     return currentIndex
 
@@ -126,3 +132,6 @@ while (True):
         myLoc = changeDirectory(myLoc, inputs[1])
 
     # break
+
+# for i in range(totalItems()):
+#     print(currentFolderName(i) + ": " + itemType(i))
