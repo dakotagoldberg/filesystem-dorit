@@ -1,7 +1,7 @@
 global fileSystem
 global myLoc
 fileSystem = "[folder:dorit[folder:winter[folder:december[folder:christmas[]][folder:kwanzaa[]]][folder:january[]][file:sleet is cool][file:ice]]]"
-myLoc = 0
+myLoc = 1
 
 
 def findLocation(index):
@@ -128,10 +128,18 @@ def changeDirectory(currentIndex, newLoc):
     return currentIndex
 
 
-def rm(fileName):
+def rm(fileName,fileIndex):
+    print(fileSystem)
     if fileName in parseContents(myLoc):
         print("run Code")
-        
+        tbd = findLocation(findFileGivenIn(myLoc,fileIndex,fileName))
+        scabbard = fileSystem[0:tbd-5]
+        print(scabbard)
+        print()
+        sword = fileSystem[tbd+len(fileName)+2:len(fileSystem)]
+        print(sword)
+        print()
+        print(scabbard+sword)
     else:
         print("error File Does not exist")
         return(fileSystem)
@@ -159,4 +167,4 @@ def findFileGivenIn(index,fileIndex,nameFile):
         i+=1
     return 0
 
-findFileGivenIn(1,2,"ice")
+rm("sleet is cool",1)
