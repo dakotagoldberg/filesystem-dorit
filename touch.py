@@ -134,12 +134,35 @@ def touch1(input):
             print("error input not supported")
         tempLoc = changeDirectory(tempLoc, i)
     startPoint = findLocation(tempLoc)
-    if(fileSystem[startPoint+ len(currentFolderName(tempLoc))+1:startPoint+ len(currentFolderName(tempLoc))+3] == "[]"
     
     Triforce1 = fileSystem[0:startPoint + len(currentFolderName(tempLoc))+1]
     #print(Triforce1)
     Triforce2 = "[file:]"
-    Triforce3 = fileSystem[startPoint+ len(currentFolderName(tempLoc))+1:len(fileSystem)]
+    if(fileSystem[startPoint+ len(currentFolderName(tempLoc))+1 : startPoint+ len(currentFolderName(tempLoc))+3] == "[]"):
+        Triforce3 = fileSystem[startPoint+ len(currentFolderName(tempLoc))+3:len(fileSystem)]
+    else:
+        Triforce3 = fileSystem[startPoint+ len(currentFolderName(tempLoc))+1:len(fileSystem)]
+    #print(Triforce3)
+    #print(Triforce1+Triforce2+Triforce3)
+    
+    return Triforce1 +Triforce2 + Triforce3
+def touch2():
+    tempLoc = 0
+    place = currentPath(myLoc)
+    for i in place:
+        print(tempLoc)
+        if tempLoc == None:
+            print("error input not supported")
+        tempLoc = changeDirectory(tempLoc, i)
+    startPoint = findLocation(tempLoc)
+    
+    Triforce1 = fileSystem[0:startPoint + len(currentFolderName(tempLoc))+1]
+    #print(Triforce1)
+    Triforce2 = "[file:]"
+    if(fileSystem[startPoint+ len(currentFolderName(tempLoc))+1 : startPoint+ len(currentFolderName(tempLoc))+3] == "[]"):
+        Triforce3 = fileSystem[startPoint+ len(currentFolderName(tempLoc))+3:len(fileSystem)]
+    else:
+        Triforce3 = fileSystem[startPoint+ len(currentFolderName(tempLoc))+1:len(fileSystem)]
     #print(Triforce3)
     #print(Triforce1+Triforce2+Triforce3)
     
