@@ -109,7 +109,7 @@ def showHelp():
 
 
 def listContents(index):
-    numFiles = 0
+    numFiles = 1
     for i in parseContents(index):
         if itemType(reverseLookup(i)) == "file":
             print(i + " --> " + itemType(reverseLookup(i)) + " ["+ str(numFiles) +"]")
@@ -127,6 +127,122 @@ def changeDirectory(currentIndex, newLoc):
             return reverseLookup(newLoc)
     return currentIndex
 
+# Spencer does not like .split()
+def createPath(input):
+    input = input[1:len(input)] + "/"
+    temp = ""
+    numSlash = 0
+    for i in range(len(input)):
+        if(input[i] == '/'):
+            numSlash+=1
+    output = []
+    numSlash = 0
+    for i in range(len(input)):
+        if(input[i] == '/'):
+            output += [temp]
+            temp = ""
+            numSlash += 1
+        else:
+            temp += "" + input[i]
+    return output
+
+
+# Adds a file at the specified path.
+def touch1(input):
+    tempLoc = 0
+    place = createPath(input)
+    for i in place:
+        print(tempLoc)
+        if tempLoc == None:
+            print("error input not supported")
+        tempLoc = changeDirectory(tempLoc, i)
+    startPoint = findLocation(tempLoc)
+    
+    Triforce1 = fileSystem[0:startPoint + len(currentFolderName(tempLoc))+1]
+    Triforce2 = "[file:null]"
+    if(fileSystem[startPoint+ len(currentFolderName(tempLoc))+1 : startPoint+ len(currentFolderName(tempLoc))+3] == "[]"):
+        Triforce3 = fileSystem[startPoint+ len(currentFolderName(tempLoc))+3:len(fileSystem)]
+    else:
+        Triforce3 = fileSystem[startPoint+ len(currentFolderName(tempLoc))+1:len(fileSystem)]
+
+    
+    return Triforce1 +Triforce2 + Triforce3
+
+
+def touch2():
+    tempLoc = 0
+    place = currentPath(myLoc)[::-1]
+    for i in place:
+        print(tempLoc)
+        if tempLoc == None:
+            print("error input not supported")
+        tempLoc = changeDirectory(tempLoc, i)
+    startPoint = findLocation(tempLoc)
+    
+    Triforce1 = fileSystem[0:startPoint + len(currentFolderName(tempLoc))+1]
+    Triforce2 = "[file:null]"
+    if(fileSystem[startPoint+ len(currentFolderName(tempLoc))+1 : startPoint+ len(currentFolderName(tempLoc))+3] == "[]"):
+        Triforce3 = fileSystem[startPoint+ len(currentFolderName(tempLoc))+3:len(fileSystem)]
+    else:
+        Triforce3 = fileSystem[startPoint+ len(currentFolderName(tempLoc))+1:len(fileSystem)]
+
+    
+    return Triforce1 +Triforce2 + Triforce3
+        
+def edit(fileNum):
+
+    
+    while True:
+    #print("while1")
+        newVal = raw_input("Enter new value: ")
+        ns = ""
+        for i in newVal:
+            if i != " ":
+                ns += i
+
+        if not (ns.isalnum()):
+            print ("Invalid value")
+            return
+        break
+
+            
+ #print(parseContents(myLoc))
+    clown = numberOfFilesInFolder(myLoc)
+ #print(clown)
+    place = findLocation(myLoc)
+
+    # if fileNum > clown:
+
+    #     return "-1"
+
+    # else:
+
+    #     firstString = fileSystem[:place]
+
+    secondString = fileSystem[place:]
+
+    temp = 0
+
+    while fileNum !=0:
+   #print("while2")
+        num=secondString.find("file:",temp)
+
+        if num:
+
+            fileNum-=1
+
+            temp += num
+
+    subFind = secondString.find("]", temp)
+
+    tempSub1 = secondString[:(temp+5)]
+
+    tempSub2 = secondString[(subFind):]
+
+    return(tempSub1 + newVal + tempSub2)
+
+
+# print(edit(2))
 
 
 while (True):
@@ -141,5 +257,26 @@ while (True):
         listContents(myLoc)
     elif (inputs[0] == "cd"):
         myLoc = changeDirectory(myLoc, inputs[1])
-    # elif (inputs[0] == "edit"):
+    elif (inputs[0] == "edit"):
+        tempLoc = currentFolderName(myLoc)
+        if (int(inputs[1]) == 0 or int(inputs[1]) > numberOfFilesInFolder(myLoc)):
+            print("Not a valid file")
+        else:
+            fileSystem = edit(int(inputs[1]))
+        myLoc = reverseLookup(tempLoc)
+        print(fileSystem)
+    elif (inputs[0] == "mkdir"):
+        if (inputs[1][0] == "/"):
+            print("do first mkdir method")
+        else:
+            print("do first mkdir method")
+    elif (inputs[0] == "touch" and len(inputs) == 1):
+        fileSystem = touch2()
+    elif (inputs[0] == "touch"):
+        tempLoc = currentFolderName(myLoc)
+        fileSystem = touch1(inputs[1])
+        myLoc = reverseLookup(tempLoc)
+
+
+
         
