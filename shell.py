@@ -225,9 +225,9 @@ def findFileGivenIn(index,fileIndex):
     return 0
 
 def edit(fileNum):
-    fileNum = fileNum - 1
+    fileNum = fileNum
     while True:
-        newVal = raw_input("Enter new value: ")
+        newVal = input("Enter new value: ")
         ns = ""
         for i in newVal:
             if i != " ":
@@ -247,11 +247,16 @@ def edit(fileNum):
     temp = findLocation(findFileGivenIn(myLoc, fileNum-1))
     print (temp)
     subFind = secondString.find("]", temp)
-    print(subFind)
     tempSub1 = secondString[:(temp+1)]
-    print(tempSub1)
+    fileName =""
+    numFiles = 0
+    for i in parseContents(myLoc):
+        if itemType(reverseLookup(i)) == "file":
+            #print(i + " --> " + itemType(reverseLookup(i)) + " ["+ str(numFiles) +"]")
+            numFiles+=1
+            if(numFiles == fileNum):
+                fileName = i
     tempSub2 = secondString[(subFind):]
-    print(tempSub2)
 
     print("test: " + str(temp))
     return(firstString + tempSub1 + newVal + tempSub2)
@@ -271,7 +276,7 @@ def Rmdr(index, foldername):
 
 
 while (True):
-    command = raw_input(currentFolderName(myLoc) + ": ")
+    command = input(currentFolderName(myLoc) + ": ")
     # The big IF: based on command entered, run specific action.
     inputs = command.split(" ")
     if (inputs[0] == "help"):
@@ -284,7 +289,7 @@ while (True):
         myLoc = changeDirectory(myLoc, inputs[1])
     elif (inputs[0] == "edit"):
         tempLoc = currentFolderName(myLoc)
-        if (int(inputs[1]) == 0 or int(inputs[1]) > numberOfFilesInFolder(myLoc)):
+        if (int(inputs[1]) > numberOfFilesInFolder(myLoc)):
             print("Not a valid file")
         else:
             fileSystem = edit(int(inputs[1]))

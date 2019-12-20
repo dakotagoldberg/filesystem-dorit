@@ -175,4 +175,4 @@ def findFileGivenIn(index,fileIndex):
         i+=1
     return 0
 #print(findFileGivenIn(myLoc,0))
-rm(1)
+print(findLocation(findFileGivenIn(myLoc,0)))
