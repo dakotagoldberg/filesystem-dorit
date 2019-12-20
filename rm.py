@@ -128,8 +128,17 @@ def changeDirectory(currentIndex, newLoc):
     return currentIndex
 
 
-def rm(fileName,fileIndex):
+def rm(fileIndex):
+    fileName =""
+    numFiles = 0
+    for i in parseContents(myLoc):
+        if itemType(reverseLookup(i)) == "file":
+            #print(i + " --> " + itemType(reverseLookup(i)) + " ["+ str(numFiles) +"]")
+            numFiles+=1
+            if(numFiles == fileIndex):
+                fileName = i
     print(fileSystem)
+    print(fileName)
     if fileName in parseContents(myLoc):
         print("run Code")
         tbd = findLocation(findFileGivenIn(myLoc,fileIndex))
@@ -140,9 +149,6 @@ def rm(fileName,fileIndex):
         print(sword)
         print()
         print(scabbard+sword)
-    else:
-        print("error File Does not exist")
-        return(fileSystem)
 
 def findFileGivenIn(index,fileIndex):
     raw = currentFolderContents(index)
@@ -168,5 +174,5 @@ def findFileGivenIn(index,fileIndex):
             count+=1
         i+=1
     return 0
-print(findFileGivenIn(myLoc,0))
-#rm("sleet is cool",1)
+#print(findFileGivenIn(myLoc,0))
+rm(1)
