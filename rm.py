@@ -1,7 +1,7 @@
 global fileSystem
 global myLoc
 fileSystem = "[folder:dorit[folder:winter[folder:december[folder:christmas[]][folder:kwanzaa[]]][folder:january[]][file:sleet is cool][file:ice]]]"
-myLoc = 0
+myLoc = 1
 
 
 def findLocation(index):
@@ -128,18 +128,27 @@ def changeDirectory(currentIndex, newLoc):
     return currentIndex
 
 
-def rm(fileName):
+def rm(fileName,fileIndex):
+    print(fileSystem)
     if fileName in parseContents(myLoc):
         print("run Code")
-        
+        tbd = findLocation(findFileGivenIn(myLoc,fileIndex))
+        scabbard = fileSystem[0:tbd-5]
+        print(scabbard)
+        print()
+        sword = fileSystem[tbd+len(fileName)+2:len(fileSystem)]
+        print(sword)
+        print()
+        print(scabbard+sword)
     else:
         print("error File Does not exist")
         return(fileSystem)
 
-def findFileGivenIn(index,fileIndex,nameFile):
+def findFileGivenIn(index,fileIndex):
     raw = currentFolderContents(index)
     openB = 0
     closedB = 0
+    count2 =0
     count = index + 1
     start = findLocation(index) + len(currentFolderName(index)) + 1
     i = start
@@ -151,12 +160,13 @@ def findFileGivenIn(index,fileIndex,nameFile):
         elif fileSystem[i] == ":":
             if (openB - closedB == 1):
                 if(fileSystem[findLocation(count)-4:findLocation(count)]== "file"):
-                    if((fileSystem[findLocation(count)+1:findLocation(count)+len(nameFile)+1]) == nameFile):
-                        print(fileSystem[findLocation(count)+1:findLocation(count)+len(nameFile)+1])
+                    if(count2 == fileIndex):
+                        print(fileSystem[findLocation(count)+1:findLocation(count)+4])
                         return(count)
+                    count2+=1
                         
             count+=1
         i+=1
     return 0
-
-findFileGivenIn(1,2,"ice")
+print(findFileGivenIn(myLoc,0))
+#rm("sleet is cool",1)
