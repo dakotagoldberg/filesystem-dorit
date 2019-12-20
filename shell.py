@@ -20,6 +20,13 @@ def reverseLookup(name):
                 return count
             count+=1
 
+def relativeReverseLookup(index, name):
+    count = index
+    for i in range(findLocation(index), len(fileSystem)):
+        if fileSystem[i] == ":":
+            if (currentFolderName(count) == name):
+                return count
+            count+=1
 
 def totalItems():
     return fileSystem.count(":")
@@ -245,38 +252,36 @@ def edit(fileNum):
 # print(edit(2))
 
 
-while (True):
-    command = raw_input(currentFolderName(myLoc) + ": ")
-    # The big IF: based on command entered, run specific action.
-    inputs = command.split(" ")
-    if (inputs[0] == "help"):
-        showHelp()
-    elif (inputs[0] == "path"):
-        currentPath(myLoc)
-    elif (inputs[0] == "ls"):
-        listContents(myLoc)
-    elif (inputs[0] == "cd"):
-        myLoc = changeDirectory(myLoc, inputs[1])
-    elif (inputs[0] == "edit"):
-        tempLoc = currentFolderName(myLoc)
-        if (int(inputs[1]) == 0 or int(inputs[1]) > numberOfFilesInFolder(myLoc)):
-            print("Not a valid file")
-        else:
-            fileSystem = edit(int(inputs[1]))
-        myLoc = reverseLookup(tempLoc)
-        print(fileSystem)
-    elif (inputs[0] == "mkdir"):
-        if (inputs[1][0] == "/"):
-            print("do first mkdir method")
-        else:
-            print("do first mkdir method")
-    elif (inputs[0] == "touch" and len(inputs) == 1):
-        fileSystem = touch2()
-    elif (inputs[0] == "touch"):
-        tempLoc = currentFolderName(myLoc)
-        fileSystem = touch1(inputs[1])
-        myLoc = reverseLookup(tempLoc)
+# while (True):
+#     command = raw_input(currentFolderName(myLoc) + ": ")
+#     # The big IF: based on command entered, run specific action.
+#     inputs = command.split(" ")
+#     if (inputs[0] == "help"):
+#         showHelp()
+#     elif (inputs[0] == "path"):
+#         currentPath(myLoc)
+#     elif (inputs[0] == "ls"):
+#         listContents(myLoc)
+#     elif (inputs[0] == "cd"):
+#         myLoc = changeDirectory(myLoc, inputs[1])
+#     elif (inputs[0] == "edit"):
+#         tempLoc = currentFolderName(myLoc)
+#         if (int(inputs[1]) == 0 or int(inputs[1]) > numberOfFilesInFolder(myLoc)):
+#             print("Not a valid file")
+#         else:
+#             fileSystem = edit(int(inputs[1]))
+#         myLoc = reverseLookup(tempLoc)
+#         print(fileSystem)
+#     elif (inputs[0] == "mkdir"):
+#         if (inputs[1][0] == "/"):
+#             print("do first mkdir method")
+#         else:
+#             print("do first mkdir method")
+#     elif (inputs[0] == "touch" and len(inputs) == 1):
+#         fileSystem = touch2()
+#     elif (inputs[0] == "touch"):
+#         tempLoc = currentFolderName(myLoc)
+#         fileSystem = touch1(inputs[1])
+#         myLoc = reverseLookup(tempLoc)
 
 
-
-        
