@@ -1,6 +1,6 @@
 global fileSystem
 global myLoc
-fileSystem = "[folder:dorit[folder:winter[folder:december[folder:christmas[]][folder:kwanzaa[]]][folder:january[]][file:sleet][file:ice]]]"
+fileSystem = "[folder:dorit[folder:winter[folder:december[folder:christmas[]][folder:kwanzaa[]]][folder:january[]][file:sleet is cool][file:ice]]]"
 myLoc = 0
 
 
@@ -35,6 +35,13 @@ def currentFolderContents(index):
             closedB +=1
         if openB == closedB - 1:
             return fileSystem[findLocation(index) + len(currentFolderName(index))+1:i]
+
+def numberOfFilesInFolder(index):
+    count = 0
+    for i in parseContents(index):
+        if itemType(reverseLookup(i)) == "file":
+            count+=1
+    return count
 
 
 def currentFolderName(index):
@@ -102,8 +109,13 @@ def showHelp():
 
 
 def listContents(index):
+    numFiles = 0
     for i in parseContents(index):
-        print(i + " --> " + itemType(reverseLookup(i)))
+        if itemType(reverseLookup(i)) == "file":
+            print(i + " --> " + itemType(reverseLookup(i)) + " ["+ str(numFiles) +"]")
+            numFiles+=1
+        else:
+            print(i + " --> " + itemType(reverseLookup(i)))
 
 def changeDirectory(currentIndex, newLoc):
     if newLoc == ".." and currentIndex != 0:
@@ -116,8 +128,8 @@ def changeDirectory(currentIndex, newLoc):
     return currentIndex
 
 
-while (True):
 
+while (True):
     command = raw_input(currentFolderName(myLoc) + ": ")
     # The big IF: based on command entered, run specific action.
     inputs = command.split(" ")
@@ -129,4 +141,5 @@ while (True):
         listContents(myLoc)
     elif (inputs[0] == "cd"):
         myLoc = changeDirectory(myLoc, inputs[1])
-
+    # elif (inputs[0] == "edit"):
+        
