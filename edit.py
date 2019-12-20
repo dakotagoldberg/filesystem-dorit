@@ -44,12 +44,6 @@ def numberOfFilesInFolder(index):
     return count
 
 
-def currentFolderName(index):
-    i = findLocation(index)
-    while (fileSystem[i] != "[" and fileSystem[i] != "]"):
-        i+=1
-    return fileSystem[findLocation(index)+1:i]
-
 def itemType(index):
     i = findLocation(index)
     while (fileSystem[i] != "[" and fileSystem[i] != "]"):
@@ -126,54 +120,46 @@ def changeDirectory(currentIndex, newLoc):
         if newLoc in x and itemType(reverseLookup(newLoc)) == "folder":
             return reverseLookup(newLoc)
     return currentIndex
+
+def findFileGivenIn(index,fileIndex):
+    raw = currentFolderContents(index)
+    openB = 0
+    closedB = 0
+    count2 =0
+    count = index + 1
+    start = findLocation(index) + len(currentFolderName(index)) + 1
+    i = start
+    while (i < len(raw) + start):
+        if fileSystem[i] == "[":
+            openB+=1
+        elif fileSystem[i] == "]":
+            closedB +=1
+        elif fileSystem[i] == ":":
+            if (openB - closedB == 1):
+                if(fileSystem[findLocation(count)-4:findLocation(count)]== "file"):
+                    count2+=1
+                    if(count2 == fileIndex):
+                        print(fileSystem[findLocation(count)+1:findLocation(count)+4])
+                        return(count)
+                    
+                        
+            count+=1
+        i+=1
+    return 0
+
+def currentFolderName(index):
+    i = findLocation(index)
+    while (fileSystem[i] != "[" and fileSystem[i] != "]"):
+        i+=1
+    return fileSystem[findLocation(index)+1:i]
+
+def edit(fileNum, newVal):
+    filePlacement = findFileGivenIn(myLoc,fileNum)
+    fileOGName = currentFolderName(filePlacement)
+    filePlacement = findLocation(filePlacement)
+    Triforce1 = fileSystem[0:filePlacement+1]
+    Triforce3 = fileSystem[filePlacement+1+len(fileOGName): len(fileSystem)]
+    return Triforce1+newVal+Triforce3
     
-def edit(fileNum):
-
- while True:
-  #print("while1")
-  newVal = input("Enter new value: ")
-
-  if newVal.isalnum():
-   #print("alpha")
-   break
-
-  else:
-
-   print ("Invalid value")
- #print(parseContents(myLoc))
- clown = numberOfFilesInFolder(myLoc)
- #print(clown)
- place = findLocation(myLoc)
-
- if fileNum > clown:
-
-  return "-1"
-
- else:
-
-  firstString = fileSystem[:place]
-
-  secondString = fileSystem[place:]
-
-  temp = 0
-
-  while fileNum !=0:
-   #print("while2")
-   num=secondString.find("file:",temp)
-
-   if num:
-
-    fileNum-=1
-
-    temp += num
-
-  subFind = secondString.find("]", temp)
-
-  tempSub1 = secondString[:(temp+5)]
-
-  tempSub2 = secondString[(subFind):]
-
-  return(tempSub1 + newVal + tempSub2)
-
-
-print(edit(2))
+#print(edit(input("numPlease"), input("give new input")))
+print(edit(2,"snow"))
