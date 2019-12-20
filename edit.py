@@ -126,6 +126,7 @@ def changeDirectory(currentIndex, newLoc):
         if newLoc in x and itemType(reverseLookup(newLoc)) == "folder":
             return reverseLookup(newLoc)
     return currentIndex
+    
 def edit(fileNum):
 
  while True:
