@@ -166,13 +166,15 @@ def findFileGivenIn(index,fileIndex):
         elif fileSystem[i] == ":":
             if (openB - closedB == 1):
                 if(fileSystem[findLocation(count)-4:findLocation(count)]== "file"):
+                    count2+=1
                     if(count2 == fileIndex):
                         print(fileSystem[findLocation(count)+1:findLocation(count)+4])
                         return(count)
-                    count2+=1
+                    
                         
             count+=1
         i+=1
     return 0
 #print(findFileGivenIn(myLoc,0))
-print(findLocation(findFileGivenIn(myLoc,0)))
+#print(findLocation(findFileGivenIn(myLoc,0)))
+rm(2)
