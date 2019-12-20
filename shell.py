@@ -196,7 +196,7 @@ def touch2():
     
     return Triforce1 +Triforce2 + Triforce3
         
-def edit(fileNum):
+def edit(fileNum, name):
 
     
     while True:
@@ -212,76 +212,51 @@ def edit(fileNum):
             return
         break
 
-            
- #print(parseContents(myLoc))
     clown = numberOfFilesInFolder(myLoc)
- #print(clown)
     place = findLocation(myLoc)
 
-    # if fileNum > clown:
-
-    #     return "-1"
-
-    # else:
-
-    #     firstString = fileSystem[:place]
-
+    firstString = fileSystem[:place]
     secondString = fileSystem[place:]
 
     temp = 0
-
-    while fileNum !=0:
-   #print("while2")
-        num=secondString.find("file:",temp)
-
-        if num:
-
-            fileNum-=1
-
-            temp += num
-
+    temp = findFileGivenIn(myLoc, fileNum, old)
     subFind = secondString.find("]", temp)
-
     tempSub1 = secondString[:(temp+5)]
-
     tempSub2 = secondString[(subFind):]
 
-    return(tempSub1 + newVal + tempSub2)
+    return(firstString + tempSub1 + newVal + tempSub2 + secondString)
 
 
-# print(edit(2))
-
-
-# while (True):
-#     command = raw_input(currentFolderName(myLoc) + ": ")
-#     # The big IF: based on command entered, run specific action.
-#     inputs = command.split(" ")
-#     if (inputs[0] == "help"):
-#         showHelp()
-#     elif (inputs[0] == "path"):
-#         currentPath(myLoc)
-#     elif (inputs[0] == "ls"):
-#         listContents(myLoc)
-#     elif (inputs[0] == "cd"):
-#         myLoc = changeDirectory(myLoc, inputs[1])
-#     elif (inputs[0] == "edit"):
-#         tempLoc = currentFolderName(myLoc)
-#         if (int(inputs[1]) == 0 or int(inputs[1]) > numberOfFilesInFolder(myLoc)):
-#             print("Not a valid file")
-#         else:
-#             fileSystem = edit(int(inputs[1]))
-#         myLoc = reverseLookup(tempLoc)
-#         print(fileSystem)
-#     elif (inputs[0] == "mkdir"):
-#         if (inputs[1][0] == "/"):
-#             print("do first mkdir method")
-#         else:
-#             print("do first mkdir method")
-#     elif (inputs[0] == "touch" and len(inputs) == 1):
-#         fileSystem = touch2()
-#     elif (inputs[0] == "touch"):
-#         tempLoc = currentFolderName(myLoc)
-#         fileSystem = touch1(inputs[1])
-#         myLoc = reverseLookup(tempLoc)
+while (True):
+    command = raw_input(currentFolderName(myLoc) + ": ")
+    # The big IF: based on command entered, run specific action.
+    inputs = command.split(" ")
+    if (inputs[0] == "help"):
+        showHelp()
+    elif (inputs[0] == "path"):
+        currentPath(myLoc)
+    elif (inputs[0] == "ls"):
+        listContents(myLoc)
+    elif (inputs[0] == "cd"):
+        myLoc = changeDirectory(myLoc, inputs[1])
+    elif (inputs[0] == "edit"):
+        tempLoc = currentFolderName(myLoc)
+        if (int(inputs[1]) == 0 or int(inputs[1]) > numberOfFilesInFolder(myLoc)):
+            print("Not a valid file")
+        else:
+            fileSystem = edit(int(inputs[1]))
+        myLoc = reverseLookup(tempLoc)
+        print(fileSystem)
+    elif (inputs[0] == "mkdir"):
+        if (inputs[1][0] == "/"):
+            print("do first mkdir method")
+        else:
+            print("do first mkdir method")
+    elif (inputs[0] == "touch" and len(inputs) == 1):
+        fileSystem = touch2()
+    elif (inputs[0] == "touch"):
+        tempLoc = currentFolderName(myLoc)
+        fileSystem = touch1(inputs[1])
+        myLoc = reverseLookup(tempLoc)
 
 
