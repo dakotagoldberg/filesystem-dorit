@@ -258,10 +258,13 @@ while (True):
     elif (inputs[0] == "cd"):
         myLoc = changeDirectory(myLoc, inputs[1])
     elif (inputs[0] == "edit"):
+        tempLoc = currentFolderName(myLoc)
         if (int(inputs[1]) == 0 or int(inputs[1]) > numberOfFilesInFolder(myLoc)):
             print("Not a valid file")
         else:
             fileSystem = edit(int(inputs[1]))
+        myLoc = reverseLookup(tempLoc)
+        print(fileSystem)
     elif (inputs[0] == "mkdir"):
         if (inputs[1][0] == "/"):
             print("do first mkdir method")
