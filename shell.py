@@ -3,7 +3,7 @@ global myLoc
 fileSystem = "[folder:dorit[folder:winter[folder:december[folder:christmas[]][folder:kwanzaa[]]][folder:january[]][file:sleet is cool][file:ice]]]"
 myLoc = 0
 
-
+# Returns the character index of the colon of the item at given "index" (0, 1, 2, ...)
 def findLocation(index):
     count = 0
     for i in range(len(fileSystem)):
@@ -12,6 +12,7 @@ def findLocation(index):
                 return i
             count+=1
 
+# Returns the "index" of the first occurance of an item of a given name in the entire system.
 def reverseLookup(name):
     count = 0
     for i in range(len(fileSystem)):
@@ -20,11 +21,20 @@ def reverseLookup(name):
                 return count
             count+=1
 
+# Returns the "index" of an item of a given name in the current folder.
+def relativeReverseLookup(index, name):
+    count = index
+    for i in range(findLocation(index), len(fileSystem)):
+        if fileSystem[i] == ":":
+            if (currentFolderName(count) == name):
+                return count
+            count+=1
 
+# Returns the total number of folders and files in the system.
 def totalItems():
     return fileSystem.count(":")
 
-
+# Returns a string with everything in a folder and subcontents.
 def currentFolderContents(index):
     openB = 0
     closedB = 0
@@ -188,12 +198,35 @@ def touch2():
 
     
     return Triforce1 +Triforce2 + Triforce3
-        
-def edit(fileNum):
 
-    
+def findFileGivenIn(index,fileIndex):
+    raw = currentFolderContents(index)
+    openB = 0
+    closedB = 0
+    count2 =0
+    count = index + 1
+    start = findLocation(index) + len(currentFolderName(index)) + 1
+    i = start
+    while (i < len(raw) + start):
+        if fileSystem[i] == "[":
+            openB+=1
+        elif fileSystem[i] == "]":
+            closedB +=1
+        elif fileSystem[i] == ":":
+            if (openB - closedB == 1):
+                if(fileSystem[findLocation(count)-4:findLocation(count)]== "file"):
+                    if(count2 == fileIndex):
+                        print(fileSystem[findLocation(count)+1:findLocation(count)+4])
+                        return(count)
+                    count2+=1
+                        
+            count+=1
+        i+=1
+    return 0
+
+def edit(fileNum):
+    fileNum = fileNum - 1
     while True:
-    #print("while1")
         newVal = raw_input("Enter new value: ")
         ns = ""
         for i in newVal:
@@ -205,44 +238,22 @@ def edit(fileNum):
             return
         break
 
-            
- #print(parseContents(myLoc))
     clown = numberOfFilesInFolder(myLoc)
- #print(clown)
     place = findLocation(myLoc)
 
-    # if fileNum > clown:
-
-    #     return "-1"
-
-    # else:
-
-    #     firstString = fileSystem[:place]
-
+    firstString = fileSystem[:place]
     secondString = fileSystem[place:]
 
-    temp = 0
-
-    while fileNum !=0:
-   #print("while2")
-        num=secondString.find("file:",temp)
-
-        if num:
-
-            fileNum-=1
-
-            temp += num
-
+    temp = findLocation(findFileGivenIn(myLoc, fileNum))
     subFind = secondString.find("]", temp)
-
-    tempSub1 = secondString[:(temp+5)]
-
+    tempSub1 = secondString[:(temp+1)]
     tempSub2 = secondString[(subFind):]
 
-    return(tempSub1 + newVal + tempSub2)
+    print("test: " + str(temp))
+    return(firstString + tempSub1 + newVal + tempSub2)
 
 
-# print(edit(2))
+
 
 
 while (True):
@@ -279,4 +290,3 @@ while (True):
 
 
 
-        
