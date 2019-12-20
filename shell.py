@@ -244,16 +244,30 @@ def edit(fileNum):
     firstString = fileSystem[:place]
     secondString = fileSystem[place:]
 
-    temp = findLocation(findFileGivenIn(myLoc, fileNum))
+    temp = findLocation(findFileGivenIn(myLoc, fileNum-1))
+    print (temp)
     subFind = secondString.find("]", temp)
+    print(subFind)
     tempSub1 = secondString[:(temp+1)]
+    print(tempSub1)
     tempSub2 = secondString[(subFind):]
+    print(tempSub2)
 
     print("test: " + str(temp))
     return(firstString + tempSub1 + newVal + tempSub2)
 
 
+def Rmdr(index, foldername):
+    openB = 0
+    closedB = 0
+    tempLoc = changeDirectory(myLoc,foldername)
+    if fileSystem[findLocation(tempLoc) + len(foldername) + 1: findLocation(tempLoc) + len(foldername) + 3] == "[]":
+        return fileSystem[0: findLocation(tempLoc) - 7] + fileSystem[findLocation(tempLoc) + len(foldername) + 4: len(fileSystem)]
+    else:
+        print("cannot delete. Something is in that folder")
 
+
+# def makeDirectory()
 
 
 while (True):
@@ -277,16 +291,15 @@ while (True):
         myLoc = reverseLookup(tempLoc)
         print(fileSystem)
     elif (inputs[0] == "mkdir"):
-        if (inputs[1][0] == "/"):
-            print("do first mkdir method")
-        else:
-            print("do first mkdir method")
+        print()
     elif (inputs[0] == "touch" and len(inputs) == 1):
         fileSystem = touch2()
     elif (inputs[0] == "touch"):
         tempLoc = currentFolderName(myLoc)
         fileSystem = touch1(inputs[1])
         myLoc = reverseLookup(tempLoc)
+    elif (inputs[0] == "rmdir"):
+        fileSystem = Rmdr(myLoc,""+inputs[1])
 
 
 
