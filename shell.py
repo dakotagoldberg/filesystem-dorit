@@ -267,7 +267,19 @@ def Rmdr(index, foldername):
         print("cannot delete. Something is in that folder")
 
 
-# def makeDirectory()
+def makeDirectory(currentLoc, toName):
+    if toName in parseContents(currentLoc):
+        print("A folder with that name already exists.")
+        return fileSystem
+    else:
+        newName = toName
+    currentFolderLength = len(currentFolderContents(currentLoc))
+    toInsertIndex = findLocation(currentLoc) + currentFolderLength + len(itemType(currentLoc))
+    newSystem = fileSystem[:toInsertIndex + 1] + "[folder: " + newName + "[]]" + fileSystem[toInsertIndex:]
+    print(fileSystem[toInsertIndex:])
+    print(currentFolderLength)
+    print(newSystem)
+    return fileSystem
 
 
 while (True):
@@ -291,7 +303,7 @@ while (True):
         myLoc = reverseLookup(tempLoc)
         print(fileSystem)
     elif (inputs[0] == "mkdir"):
-        print()
+        fileSystem = makeDirectory(myLoc, inputs[1])
     elif (inputs[0] == "touch" and len(inputs) == 1):
         fileSystem = touch2()
     elif (inputs[0] == "touch"):
@@ -302,4 +314,4 @@ while (True):
         fileSystem = Rmdr(myLoc,""+inputs[1])
 
 
-
+makeDirectory(0)
