@@ -85,6 +85,25 @@ def currentPath(index):
         i-=1
     return path
 
+def indexPath(index):
+    path = []
+    path.append(index)
+    openB = 0
+    closedB = 0
+    count = index
+    i = findLocation(index)
+    while (i > 0):
+        if fileSystem[i] == ":":
+            if (openB > closedB):
+                path.append(count)
+            count-=1
+        if fileSystem[i] == "[":
+            openB+=1
+        if fileSystem[i] == "]":
+            closedB +=1
+        i-=1
+    return path
+
 
 def parseContents(index):
     raw = currentFolderContents(index)
@@ -162,7 +181,7 @@ def touch1(input):
     tempLoc = 0
     place = createPath(input)
     for i in place:
-        print(tempLoc)
+        # print(tempLoc)
         if tempLoc == None:
             print("error input not supported")
         tempLoc = changeDirectory(tempLoc, i)
@@ -183,7 +202,7 @@ def touch2():
     tempLoc = 0
     place = currentPath(myLoc)[::-1]
     for i in place:
-        print(tempLoc)
+        # print(tempLoc)
         if tempLoc == None:
             print("error input not supported")
         tempLoc = changeDirectory(tempLoc, i)
@@ -215,51 +234,31 @@ def findFileGivenIn(index,fileIndex):
         elif fileSystem[i] == ":":
             if (openB - closedB == 1):
                 if(fileSystem[findLocation(count)-4:findLocation(count)]== "file"):
-                    if(count2 == fileIndex):
-                        print(fileSystem[findLocation(count)+1:findLocation(count)+4])
-                        return(count)
                     count2+=1
+                    if(count2 == fileIndex):
+                        # print(fileSystem[findLocation(count)+1:findLocation(count)+4])
+                        return(count)
+                    
                         
             count+=1
         i+=1
     return 0
 
 def edit(fileNum):
-    fileNum = fileNum
-    while True:
-        newVal = input("Enter new value: ")
-        ns = ""
-        for i in newVal:
-            if i != " ":
-                ns += i
-
-        if not (ns.isalnum()):
-            print ("Invalid value")
-            return
-        break
-
-    clown = numberOfFilesInFolder(myLoc)
-    place = findLocation(myLoc)
-
-    firstString = fileSystem[:place]
-    secondString = fileSystem[place:]
-
-    temp = findLocation(findFileGivenIn(myLoc, fileNum-1))
-    print (temp)
-    subFind = secondString.find("]", temp)
-    tempSub1 = secondString[:(temp+1)]
-    fileName =""
-    numFiles = 0
-    for i in parseContents(myLoc):
-        if itemType(reverseLookup(i)) == "file":
-            #print(i + " --> " + itemType(reverseLookup(i)) + " ["+ str(numFiles) +"]")
-            numFiles+=1
-            if(numFiles == fileNum):
-                fileName = i
-    tempSub2 = secondString[(subFind):]
-
-    print("test: " + str(temp))
-    return(firstString + tempSub1 + newVal + tempSub2)
+    newVal = raw_input("Enter new value: ")
+    ns = ""
+    for i in newVal:
+        if i != " ":
+            ns += i
+    if not (ns.isalnum()):
+        print("Your new file value contains forbidden characters and was not saved.")
+        return fileSystem
+    filePlacement = findFileGivenIn(myLoc,fileNum)
+    fileOGName = currentFolderName(filePlacement)
+    filePlacement = findLocation(filePlacement)
+    Triforce1 = fileSystem[0:filePlacement+1]
+    Triforce3 = fileSystem[filePlacement+1+len(fileOGName): len(fileSystem)]
+    return Triforce1+newVal+Triforce3
 
 
 def Rmdr(index, foldername):
@@ -278,17 +277,45 @@ def makeDirectory(currentLoc, toName):
         return fileSystem
     else:
         newName = toName
+    
     currentFolderLength = len(currentFolderContents(currentLoc))
-    toInsertIndex = findLocation(currentLoc) + currentFolderLength + len(itemType(currentLoc))
-    newSystem = fileSystem[:toInsertIndex + 1] + "[folder: " + newName + "[]]" + fileSystem[toInsertIndex:]
+    # print("there are " + str(numberOfFilesInFolder(currentLoc)))
+    if len(parseContents(currentLoc)) + numberOfFilesInFolder(currentLoc) == 0:
+        # print("first folder!")
+        toInsertIndex = findLocation(currentLoc) + currentFolderLength + len(itemType(currentLoc)) - 1
+        newSystem = fileSystem[:toInsertIndex] + "[folder:" + newName + "[]]" + fileSystem[toInsertIndex + 3:]
+    else:
+        toInsertIndex = findLocation(currentLoc) + currentFolderLength + len(itemType(currentLoc))
+        newSystem = fileSystem[:toInsertIndex] + "[folder:" + newName + "[]]" + fileSystem[toInsertIndex :]
+    return newSystem
     print(fileSystem[toInsertIndex:])
     print(currentFolderLength)
     print(newSystem)
-    return fileSystem
-
+    
+def rm(fileIndex):
+    fileName =""
+    numFiles = 0
+    for i in parseContents(myLoc):
+        if itemType(reverseLookup(i)) == "file":
+            #print(i + " --> " + itemType(reverseLookup(i)) + " ["+ str(numFiles) +"]")
+            numFiles+=1
+            if(numFiles == fileIndex):
+                fileName = i
+    print(fileSystem)
+    print(fileName)
+    if fileName in parseContents(myLoc):
+        print("run Code")
+        tbd = findLocation(findFileGivenIn(myLoc,fileIndex))
+        scabbard = fileSystem[0:tbd-5]
+        print(scabbard)
+        print()
+        sword = fileSystem[tbd+len(fileName)+2:len(fileSystem)]
+        print(sword)
+        print()
+        print(scabbard+sword)
 
 while (True):
-    command = input(currentFolderName(myLoc) + ": ")
+    command = raw_input(currentFolderName(myLoc) + ": ")
     # The big IF: based on command entered, run specific action.
     inputs = command.split(" ")
     if (inputs[0] == "help"):
@@ -300,15 +327,26 @@ while (True):
     elif (inputs[0] == "cd"):
         myLoc = changeDirectory(myLoc, inputs[1])
     elif (inputs[0] == "edit"):
-        tempLoc = currentFolderName(myLoc)
         if (int(inputs[1]) > numberOfFilesInFolder(myLoc)):
             print("Not a valid file")
         else:
             fileSystem = edit(int(inputs[1]))
-        myLoc = reverseLookup(tempLoc)
-        print(fileSystem)
+    elif (inputs[0] == "rm"):
+        if (int(inputs[1]) > numberOfFilesInFolder(myLoc)):
+            print("Not a valid file")
+        else:
+            fileSystem = rm(int(inputs[1]))
     elif (inputs[0] == "mkdir"):
+        temp = currentFolderName(myLoc)
+        if (myLoc != 0):
+            oldPlace = indexPath(myLoc)[1]
+        else:
+            oldPlace = 0
+        print(str(temp) + " is where we are")
         fileSystem = makeDirectory(myLoc, inputs[1])
+        myLoc = relativeReverseLookup(oldPlace, temp)
+        print(currentFolderName(myLoc) + " is where we are")
+        print(fileSystem)
     elif (inputs[0] == "touch" and len(inputs) == 1):
         fileSystem = touch2()
     elif (inputs[0] == "touch"):
@@ -319,4 +357,4 @@ while (True):
         fileSystem = Rmdr(myLoc,""+inputs[1])
 
 
-makeDirectory(0)
+# makeDirectory(0)
