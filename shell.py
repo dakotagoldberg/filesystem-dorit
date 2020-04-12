@@ -1,360 +1,318 @@
 global fileSystem
-global myLoc
-fileSystem = "[folder:dorit[folder:winter[folder:december[folder:christmas[]][folder:kwanzaa[]]][folder:january[]][file:sleet is cool][file:ice]]]"
-myLoc = 0
+fileSystem = "[folder:dorit[folder:winter[folder:december[folder:christmas[]][folder:kwanzaa[]]][folder:january[]][file:sleet is cool][file:ice]][folder:spring[file:flowers]]]"
 
-# Returns the character index of the colon of the item at given "index" (0, 1, 2, ...)
-def findLocation(index):
+# currentLoc is the current macrolocation starting at 0 (folder:dorit is 0).
+# getType(currentLoc) should always return "folder"
+global currentLoc
+currentLoc = 0
+
+# Returns the character index of a given macrolocation. 
+def getIndex(loc):
     count = 0
     for i in range(len(fileSystem)):
         if fileSystem[i] == ":":
-            if (count == index):
+            if count == loc:
                 return i
             count+=1
 
-# Returns the "index" of the first occurance of an item of a given name in the entire system.
-def reverseLookup(name):
+# Returns whether there is a folder or file at a given macrolocation.
+def getType(loc):
     count = 0
     for i in range(len(fileSystem)):
         if fileSystem[i] == ":":
-            if (currentFolderName(count) == name):
-                return count
+            if count == loc:
+                if fileSystem[i-1] == "e":
+                    return "file"
+                else:
+                    return "folder"
             count+=1
 
-# Returns the "index" of an item of a given name in the current folder.
-def relativeReverseLookup(index, name):
-    count = index
-    for i in range(findLocation(index), len(fileSystem)):
-        if fileSystem[i] == ":":
-            if (currentFolderName(count) == name):
-                return count
-            count+=1
+# Returns the name of the folder at a given macrolocation.
+def getFolderName(loc):
+    start = getIndex(loc) + 1
+    stop = 0
+    for i in range(start, len(fileSystem)):
+        if fileSystem[i] == "[":
+            stop = i
+            break
+    return fileSystem[start:stop]
 
-# Returns the total number of folders and files in the system.
-def totalItems():
-    return fileSystem.count(":")
+# Returns the contents of the file at a given macrolocation.
+def getFileContents(loc):
+    start = getIndex(loc) + 1
+    stop = 0
+    for i in range(start, len(fileSystem)):
+        if fileSystem[i] == "]":
+            stop = i
+            break
+    return fileSystem[start:stop]
 
-# Returns a string with everything in a folder and subcontents.
-def currentFolderContents(index):
+# Gets the name of a folder or the contents of a file at the given macrolocation.
+def getName(loc):
+    if getType(loc) == "folder":
+        return getFolderName(loc)
+    else:
+        return getFileContents(loc)
+
+# Returns a string of a folder and everything inside the brackets of that folder at a given macrolocation.
+def rawFolder(loc):
+    start = getIndex(loc) - len(getType(loc)) - 1
+    stop = 0
     openB = 0
     closedB = 0
-    for i in range(findLocation(index) + len(currentFolderName(index))+1, len(fileSystem)):
+    for i in range(start, len(fileSystem)):
         if fileSystem[i] == "[":
             openB+=1
-        if fileSystem[i] == "]":
-            closedB +=1
-        if openB == closedB - 1:
-            return fileSystem[findLocation(index) + len(currentFolderName(index))+1:i]
+        elif fileSystem[i] == "]":
+            closedB+=1
+        if openB == closedB:
+            stop = i + 1
+            break
+    return fileSystem[start:stop]
 
-def numberOfFilesInFolder(index):
+# Returns a string containing everything inside the brackets of that folder at a given macrolocation.
+def rawFolderContents(loc):
+    folder = rawFolder(loc)
+    margin = len(getType(loc)) + len(getFolderName(loc)) + 3
+    start = getIndex(loc) + len(getFolderName(loc)) + 1
+    stop = start + len(folder) - margin 
+    return fileSystem[start:stop]
+
+# Returns the macrolocation of the folder that the folder or file at the given macrolocation is in.
+    # Returns -1 for dorit (which has no parent).
+def getParent(loc):
+    if loc == 0:
+        return -1
+    index = getIndex(loc)
+    openB = 0
+    closedB = 0
     count = 0
-    for i in parseContents(index):
-        if itemType(reverseLookup(i)) == "file":
+    for i in range(index, 0, -1):
+        if fileSystem[i] == "[":
+            openB+=1
+        elif fileSystem[i] == "]":
+            closedB+=1
+        elif fileSystem[i] == ":":
+            if openB > closedB:
+                return loc - count
+            count+=1
+
+# Returns the number of files in a folder.
+def numberOfFiles(loc):
+    items = listFolderContents(loc)
+    count = 0
+    for i in items:
+        if i[2] == "file":
             count+=1
     return count
 
-
-def currentFolderName(index):
-    i = findLocation(index)
-    while (fileSystem[i] != "[" and fileSystem[i] != "]"):
-        i+=1
-    return fileSystem[findLocation(index)+1:i]
-
-def itemType(index):
-    i = findLocation(index)
-    while (fileSystem[i] != "[" and fileSystem[i] != "]"):
-        i-=1
-    return fileSystem[i + 1:findLocation(index)]
-
-def currentPath(index):
-    path = []
-    path.append(currentFolderName(index))
-    openB = 0
-    closedB = 0
-    count = index
-    i = findLocation(index)
-    while (i > 0):
-        if fileSystem[i] == ":":
-            if (openB > closedB):
-                path.append(str(currentFolderName(count)))
-            count-=1
-        if fileSystem[i] == "[":
-            openB+=1
-        if fileSystem[i] == "]":
-            closedB +=1
-        i-=1
-    return path
-
-def indexPath(index):
-    path = []
-    path.append(index)
-    openB = 0
-    closedB = 0
-    count = index
-    i = findLocation(index)
-    while (i > 0):
-        if fileSystem[i] == ":":
-            if (openB > closedB):
-                path.append(count)
-            count-=1
-        if fileSystem[i] == "[":
-            openB+=1
-        if fileSystem[i] == "]":
-            closedB +=1
-        i-=1
-    return path
-
-
-def parseContents(index):
-    raw = currentFolderContents(index)
+# Returns a 2D-array.
+    # 0: name of folder/file
+    # 1: macrolocation of folder/file
+    # 2: type of folder/file   
+    # 3: [if type="file"] relative index of file in the folder
+def listFolderContents(loc):
     items = []
+    tempLoc = loc
+    start = getIndex(loc) + len(getFolderName(loc)) + 1
+    stop = start + len(rawFolderContents(loc))
     openB = 0
     closedB = 0
-    count = index + 1
-    start = findLocation(index) + len(currentFolderName(index)) + 1
-    i = start
-    while (i < len(raw) + start):
+    fileCount = 0
+    for i in range(start, stop):
         if fileSystem[i] == "[":
-            openB+=1
+                openB+=1
         elif fileSystem[i] == "]":
-            closedB +=1
+            closedB+=1
         elif fileSystem[i] == ":":
-            if (openB - closedB == 1):
-                items.append(str(currentFolderName(count)))
-            count+=1
-        i+=1
+            tempLoc += 1
+            if openB - closedB == 1:
+                itemInfo = []
+                itemInfo.append(getName(tempLoc))
+                itemInfo.append(tempLoc)
+                itemInfo.append(getType(tempLoc))
+                if getType(tempLoc) == "file":
+                    fileCount+=1
+                    itemInfo.append(fileCount)
+                items.append(itemInfo)
     return items
 
+# Lists the contents of a folder (includes file indexes).
+def ls(loc):
+    items = listFolderContents(loc)
+    for i in items:
+        if i[2] == "file":
+            print(i[0] + " --> [" + str(i[3]) + "]")
+        else:
+            print(i[0])
 
+# Changes directory.
+def cd(loc, newDirectory):
+    items = listFolderContents(loc)
+    if newDirectory == "..":
+        return getParent(loc)
+    elif newDirectory == "":
+        return -1
+    for i in items:
+        if i[0] == newDirectory and i[2] == "folder":
+            return i[1]
+    return -1
+
+# Creates a new folder with a unique name in the beginning of a given directory.
+def mkdir(loc, newFolderName):
+    items = listFolderContents(loc)
+    firstItem = True
+
+    # Ensure the name is unique.
+    for i in items:
+        if i[0] == newFolderName and i[2] == "folder":
+            print("Sorry, a folder with that name already exists.")
+            return fileSystem
+
+    if len(items) != 0:
+        newFolder = "[folder:" + newFolderName + "[]" + "]"
+        newLocation = getIndex(loc) + len(getFolderName(loc)) + 1
+        return fileSystem[:newLocation] + newFolder + fileSystem[newLocation:]
+    else:
+        newFolder = "folder:" + newFolderName + "[]" + "]"
+        newLocation = getIndex(loc) + len(getFolderName(loc)) + 2
+        return fileSystem[:newLocation] + newFolder + fileSystem[newLocation + 1:]
+
+# Removes a folder from a given directory.
+def rmdir(loc, folderName):
+    items = listFolderContents(loc)
+    folderExists = False
+    folder = 0
+    for i in items:
+        if i[0] == folderName and i[2] == "folder":
+            folder = i[1]
+            folderExists = True
+
+    # Make sure the folder exists and is empty.
+    if not folderExists:
+        return fileSystem
+    if len(listFolderContents(folder)) > 0:
+        print("You can only delete empty folders.")
+        return fileSystem
+    # Realistically, this will never be a problem... but you never know!
+    if folder == 0:
+        print("You can't delete the filesystem! Long live dorit!!")
+        return fileSystem
+
+    # Check if the folder to delete is the only item in the current folder. Remove accordingly.
+    if len(items) != 1:
+        start = getIndex(folder) - len(getType(folder)) - 1
+        end = getIndex(folder) + len(getFolderName(folder)) + 4
+        return fileSystem[:start] + fileSystem[end:]
+    else:
+        start = getIndex(folder) - len(getType(folder))
+        end = getIndex(folder) + len(getFolderName(folder)) + 3
+        return fileSystem[:start] + fileSystem[end:]
+
+# Creates a new, empty file (value="null") in a given folder.
+def touch(loc):
+    items = listFolderContents(loc)
+    if len(items) != 0:
+        file = "[file:null]"
+        newLocation = getIndex(loc) + len(getFolderName(loc)) + 1
+        return fileSystem[:newLocation] + file + fileSystem[newLocation:]
+    else:
+        file = "file:null]"
+        newLocation = getIndex(loc) + len(getFolderName(loc)) + 2
+        return fileSystem[:newLocation] + file + fileSystem[newLocation + 1:]
+
+# Edits the contents of a file at a given index in a folder.
+def edit(loc, fileIndex):
+    if not fileIndex.isdigit():
+        return fileSystem
+    fileIndex = int(fileIndex)
+    items = listFolderContents(loc)
+    numFiles = numberOfFiles(loc)
+    fileLoc = 0
+    newValue = ""
+
+    # See if the given index is valid.
+    if fileIndex > numFiles:
+        print("Sorry, there is no file at that index!")
+        return fileSystem
+
+    # Get the absolute location of the file.
+    for i in items:
+        if i[2] == "file" and i[3] == fileIndex:
+            fileLoc = i[1]
+
+    # Collect a new value for the file.
+    entering = True
+    while entering:
+        newValue = raw_input("Enter new file value: ")
+        if not all(x.isalpha() or x.isspace() for x in newValue):
+            print("No punctuation allowed in files.")
+        else:
+            entering = False
+
+    # Replace the file value.
+    start = getIndex(fileLoc) + 1
+    end = getIndex(fileLoc) + len(getFileContents(fileLoc)) + 1
+    return fileSystem[:start] + newValue + fileSystem[end:]
+
+def rm(loc, fileIndex):
+    if not fileIndex.isdigit():
+        return fileSystem
+    fileIndex = int(fileIndex)
+    items = listFolderContents(loc)
+    numFiles = numberOfFiles(loc)
+    fileLoc = 0
+
+    # See if the given index is valid.
+    if fileIndex > numFiles:
+        print("Sorry, there is no file at that index!")
+        return fileSystem
+
+    # Get the absolute location of the file.
+    for i in items:
+        if i[2] == "file" and i[3] == fileIndex:
+            fileLoc = i[1]
+        else:
+            print("You can't use this command to delete folders.")
+
+    # Check if the file to delete is the only item in the current folder. Remove accordingly.
+    if len(items) != 1:
+        start = getIndex(fileLoc) - len(getType(fileLoc)) - 1
+        end = getIndex(fileLoc) + len(getFileContents(fileLoc)) + 2
+        return fileSystem[:start] + fileSystem[end:]
+    else:
+        start = getIndex(fileLoc) - len(getType(fileLoc)) - 0
+        end = getIndex(fileLoc) + len(getFileContents(fileLoc)) + 1
+        return fileSystem[:start] + fileSystem[end:]
+    
 def showHelp():
-    print("%5s %40s" % ("ls", "lists all items in folder")) 
-    print("%5s %40s" % ("cd", "changes directory")) 
-    print("%5s %40s" % ("mkdir", "creates a new directory")) 
-    print("%5s %40s" % ("touch", "creates a new file")) 
-    print("%5s %40s" % ("edit", "edits the contents of a file")) 
-    print("%5s %40s" % ("rm", "removes a file")) 
-    print("%5s %40s" % ("rmdir", "removes a folder"))  
-    print("%5s %40s" % ("path", "displays path of current location"))  
-
-
-def listContents(index):
-    numFiles = 1
-    for i in parseContents(index):
-        if itemType(reverseLookup(i)) == "file":
-            print(i + " --> " + itemType(reverseLookup(i)) + " ["+ str(numFiles) +"]")
-            numFiles+=1
-        else:
-            print(i + " --> " + itemType(reverseLookup(i)))
-
-def changeDirectory(currentIndex, newLoc):
-    if newLoc == ".." and currentIndex != 0:
-        x = currentPath(currentIndex)
-        return reverseLookup(x[1])
-    else:
-        x = parseContents(currentIndex)
-        if newLoc in x and itemType(reverseLookup(newLoc)) == "folder":
-            return reverseLookup(newLoc)
-    return currentIndex
-
-# Spencer does not like .split()
-def createPath(input):
-    input = input[1:len(input)] + "/"
-    temp = ""
-    numSlash = 0
-    for i in range(len(input)):
-        if(input[i] == '/'):
-            numSlash+=1
-    output = []
-    numSlash = 0
-    for i in range(len(input)):
-        if(input[i] == '/'):
-            output += [temp]
-            temp = ""
-            numSlash += 1
-        else:
-            temp += "" + input[i]
-    return output
-
-
-# Adds a file at the specified path.
-def touch1(input):
-    tempLoc = 0
-    place = createPath(input)
-    for i in place:
-        # print(tempLoc)
-        if tempLoc == None:
-            print("error input not supported")
-        tempLoc = changeDirectory(tempLoc, i)
-    startPoint = findLocation(tempLoc)
-    
-    Triforce1 = fileSystem[0:startPoint + len(currentFolderName(tempLoc))+1]
-    Triforce2 = "[file:null]"
-    if(fileSystem[startPoint+ len(currentFolderName(tempLoc))+1 : startPoint+ len(currentFolderName(tempLoc))+3] == "[]"):
-        Triforce3 = fileSystem[startPoint+ len(currentFolderName(tempLoc))+3:len(fileSystem)]
-    else:
-        Triforce3 = fileSystem[startPoint+ len(currentFolderName(tempLoc))+1:len(fileSystem)]
-
-    
-    return Triforce1 +Triforce2 + Triforce3
-
-
-def touch2():
-    tempLoc = 0
-    place = currentPath(myLoc)[::-1]
-    for i in place:
-        # print(tempLoc)
-        if tempLoc == None:
-            print("error input not supported")
-        tempLoc = changeDirectory(tempLoc, i)
-    startPoint = findLocation(tempLoc)
-    
-    Triforce1 = fileSystem[0:startPoint + len(currentFolderName(tempLoc))+1]
-    Triforce2 = "[file:null]"
-    if(fileSystem[startPoint+ len(currentFolderName(tempLoc))+1 : startPoint+ len(currentFolderName(tempLoc))+3] == "[]"):
-        Triforce3 = fileSystem[startPoint+ len(currentFolderName(tempLoc))+3:len(fileSystem)]
-    else:
-        Triforce3 = fileSystem[startPoint+ len(currentFolderName(tempLoc))+1:len(fileSystem)]
-
-    
-    return Triforce1 +Triforce2 + Triforce3
-
-def findFileGivenIn(index,fileIndex):
-    raw = currentFolderContents(index)
-    openB = 0
-    closedB = 0
-    count2 =0
-    count = index + 1
-    start = findLocation(index) + len(currentFolderName(index)) + 1
-    i = start
-    while (i < len(raw) + start):
-        if fileSystem[i] == "[":
-            openB+=1
-        elif fileSystem[i] == "]":
-            closedB +=1
-        elif fileSystem[i] == ":":
-            if (openB - closedB == 1):
-                if(fileSystem[findLocation(count)-4:findLocation(count)]== "file"):
-                    count2+=1
-                    if(count2 == fileIndex):
-                        # print(fileSystem[findLocation(count)+1:findLocation(count)+4])
-                        return(count)
-                    
-                        
-            count+=1
-        i+=1
-    return 0
-
-def edit(fileNum):
-    newVal = raw_input("Enter new value: ")
-    ns = ""
-    for i in newVal:
-        if i != " ":
-            ns += i
-    if not (ns.isalnum()):
-        print("Your new file value contains forbidden characters and was not saved.")
-        return fileSystem
-    filePlacement = findFileGivenIn(myLoc,fileNum)
-    fileOGName = currentFolderName(filePlacement)
-    filePlacement = findLocation(filePlacement)
-    Triforce1 = fileSystem[0:filePlacement+1]
-    Triforce3 = fileSystem[filePlacement+1+len(fileOGName): len(fileSystem)]
-    return Triforce1+newVal+Triforce3
-
-
-def Rmdr(index, foldername):
-    openB = 0
-    closedB = 0
-    tempLoc = changeDirectory(myLoc,foldername)
-    if fileSystem[findLocation(tempLoc) + len(foldername) + 1: findLocation(tempLoc) + len(foldername) + 3] == "[]":
-        return fileSystem[0: findLocation(tempLoc) - 7] + fileSystem[findLocation(tempLoc) + len(foldername) + 4: len(fileSystem)]
-    else:
-        print("cannot delete. Something is in that folder")
-
-
-def makeDirectory(currentLoc, toName):
-    if toName in parseContents(currentLoc):
-        print("A folder with that name already exists.")
-        return fileSystem
-    else:
-        newName = toName
-    
-    currentFolderLength = len(currentFolderContents(currentLoc))
-    # print("there are " + str(numberOfFilesInFolder(currentLoc)))
-    if len(parseContents(currentLoc)) + numberOfFilesInFolder(currentLoc) == 0:
-        # print("first folder!")
-        toInsertIndex = findLocation(currentLoc) + currentFolderLength + len(itemType(currentLoc)) - 1
-        newSystem = fileSystem[:toInsertIndex] + "[folder:" + newName + "[]]" + fileSystem[toInsertIndex + 3:]
-    else:
-        toInsertIndex = findLocation(currentLoc) + currentFolderLength + len(itemType(currentLoc))
-        newSystem = fileSystem[:toInsertIndex] + "[folder:" + newName + "[]]" + fileSystem[toInsertIndex :]
-    return newSystem
-    print(fileSystem[toInsertIndex:])
-    print(currentFolderLength)
-    print(newSystem)
-    
-def rm(fileIndex):
-    fileName =""
-    numFiles = 0
-    for i in parseContents(myLoc):
-        if itemType(reverseLookup(i)) == "file":
-            #print(i + " --> " + itemType(reverseLookup(i)) + " ["+ str(numFiles) +"]")
-            numFiles+=1
-            if(numFiles == fileIndex):
-                fileName = i
-    print(fileSystem)
-    print(fileName)
-    if fileName in parseContents(myLoc):
-        print("run Code")
-        tbd = findLocation(findFileGivenIn(myLoc,fileIndex))
-        scabbard = fileSystem[0:tbd-5]
-        print(scabbard)
-        print()
-        sword = fileSystem[tbd+len(fileName)+2:len(fileSystem)]
-        print(sword)
-        print()
-        print(scabbard+sword)
+    print("%19s %40s" % ("ls", "lists all items in folder")) 
+    print("%19s %40s" % ("cd [folder name]", "changes directory")) 
+    print("%19s %40s" % ("mkdir [folder name]", "creates a new directory")) 
+    print("%19s %40s" % ("touch", "creates a new file")) 
+    print("%19s %40s" % ("edit [file index]", "edits the contents of a file")) 
+    print("%19s %40s" % ("rm [file index]", "removes a file")) 
+    print("%19s %40s" % ("rmdir [folder name]", "removes a folder"))  
 
 while (True):
-    command = raw_input(currentFolderName(myLoc) + ": ")
+    # print(fileSystem)
+    command = raw_input(getFolderName(currentLoc) + ": ")
     # The big IF: based on command entered, run specific action.
     inputs = command.split(" ")
+    if (inputs[0] == "ls"):
+        ls(currentLoc)
+    elif (inputs[0] == "cd" and len(inputs) > 1):
+        if cd(currentLoc, inputs[1]) != -1:
+            currentLoc = cd(currentLoc, inputs[1])
+    elif (inputs[0] == "mkdir" and len(inputs) > 1):
+        fileSystem = mkdir(currentLoc, inputs[1])
+    elif (inputs[0] == "rmdir" and len(inputs) > 1):
+        fileSystem = rmdir(currentLoc, inputs[1])
+    elif (inputs[0] == "touch"):
+        fileSystem = touch(currentLoc)
+    elif (inputs[0] == "edit" and len(inputs) > 1):
+        fileSystem = edit(currentLoc, inputs[1])
+    elif (inputs[0] == "rm" and len(inputs) > 1):
+        fileSystem = rm(currentLoc, inputs[1])
     if (inputs[0] == "help"):
         showHelp()
-    elif (inputs[0] == "path"):
-        currentPath(myLoc)
-    elif (inputs[0] == "ls"):
-        listContents(myLoc)
-    elif (inputs[0] == "cd"):
-        myLoc = changeDirectory(myLoc, inputs[1])
-    elif (inputs[0] == "edit"):
-        if (int(inputs[1]) > numberOfFilesInFolder(myLoc)):
-            print("Not a valid file")
-        else:
-            fileSystem = edit(int(inputs[1]))
-    elif (inputs[0] == "rm"):
-        if (int(inputs[1]) > numberOfFilesInFolder(myLoc)):
-            print("Not a valid file")
-        else:
-            fileSystem = rm(int(inputs[1]))
-    elif (inputs[0] == "mkdir"):
-        temp = currentFolderName(myLoc)
-        if (myLoc != 0):
-            oldPlace = indexPath(myLoc)[1]
-        else:
-            oldPlace = 0
-        print(str(temp) + " is where we are")
-        fileSystem = makeDirectory(myLoc, inputs[1])
-        myLoc = relativeReverseLookup(oldPlace, temp)
-        print(currentFolderName(myLoc) + " is where we are")
-        print(fileSystem)
-    elif (inputs[0] == "touch" and len(inputs) == 1):
-        fileSystem = touch2()
-    elif (inputs[0] == "touch"):
-        tempLoc = currentFolderName(myLoc)
-        fileSystem = touch1(inputs[1])
-        myLoc = reverseLookup(tempLoc)
-    elif (inputs[0] == "rmdir"):
-        fileSystem = Rmdr(myLoc,""+inputs[1])
-
-
-# makeDirectory(0)
